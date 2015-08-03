@@ -1,0 +1,7 @@
+.erlang.mk.packages.v2
+_rel
+deps
+ebin
+node_modules
+priv
+relx

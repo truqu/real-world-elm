@@ -1,0 +1,23 @@
+%% -*- mode: erlang -*-
+
+{ application
+, blog_code
+, [ {description, ""}
+  , {vsn, "0.1.0"}
+  , {modules, []}
+  , {registered, [ blog_code_sup
+                 ]
+    }
+  , {applications, [ kernel
+                   , stdlib
+                   , sasl
+                   , cowboy
+                   , erlydtl
+                   , jiffy
+                   , lager
+                   ]
+    }
+  , {mod, {blog_code_app, []}}
+  , {env, []}
+  ]
+}.

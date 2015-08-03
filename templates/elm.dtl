@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <script src="//cdn.jsdelivr.net/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/js/app.min.js"></script>
+  </head>
+  <body>
+    <script>
+     // Initialize Elm component (on page load)
+     $(function() {
+       Elm.fullscreen(Elm.App);
+     });
+    </script>
+  </body>
+</html>
