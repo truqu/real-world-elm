@@ -17,6 +17,7 @@
 -define(
    ROUTES,
    [ ?STATIC_DIR("js")
+   , {"/api/artists", blog_code_handler_api_artists, []}
    , {'_', blog_code_handler_elm, []}
    ]
   ).
