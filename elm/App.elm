@@ -1,6 +1,7 @@
 module App where
 
 import Html exposing (Html)
+import Json.Decode exposing ((:=))
 
 
 -- MODEL
@@ -10,6 +11,12 @@ type alias Artist =
   , name: String
   }
 
+
+artist : Json.Decode.Decoder Artist
+artist =
+  Json.Decode.object2 Artist
+    ("id" := Json.Decode.int)
+    ("name" := Json.Decode.string)
 
 type alias Model =
   List Artist
