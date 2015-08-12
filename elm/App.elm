@@ -5,12 +5,19 @@ import Html exposing (Html)
 
 -- MODEL
 
-type alias Model = Int
+type alias Artist =
+  { id: Int
+  , name: String
+  }
+
+
+type alias Model =
+  List Artist
 
 
 init : Model
 init =
-  42
+  []
 
 
 -- UPDATE
@@ -41,6 +48,7 @@ model = Signal.foldp update init
 actions : Signal.Mailbox Action
 actions =
   Signal.mailbox NoOp
+
 
 
 -- VIEW
