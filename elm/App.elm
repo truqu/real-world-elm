@@ -18,6 +18,7 @@ artist =
     ("id" := Json.Decode.int)
     ("name" := Json.Decode.string)
 
+
 type alias Model =
   List Artist
 
