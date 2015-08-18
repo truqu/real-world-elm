@@ -53,8 +53,7 @@ main =
 
 
 model : Signal Model
-model = Signal.foldp update init
-        <| Signal.mergeMany [actions.signal]
+model = Signal.foldp update init actions.signal
 
 
 actions : Signal.Mailbox Action
