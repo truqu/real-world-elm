@@ -1,7 +1,8 @@
 module App where
 
 import Debug
-import Html exposing (Html)
+import Html exposing (..)
+import Html.Attributes exposing (class)
 import Http
 import Json.Decode exposing ((:=))
 import Task exposing (Task, andThen)
@@ -78,4 +79,14 @@ port runner =
 
 view : Model -> Html
 view model =
-  Html.div [] [ Html.text "TODO" ]
+  let th' field = th [] [ text field ]
+      tr' artist = tr [] [ td [] [ text <| toString artist.id ]
+                         , td [] [ text <| artist.name ]
+                         ]
+  in
+    div [ class "container" ]
+    [ table [ class "table table-striped table-bordered" ]
+      [ thead [] [ tr [] <| List.map th' ["ID", "name"] ]
+      , tbody [] <| List.map tr' model
+      ]
+    ]
