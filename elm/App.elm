@@ -32,6 +32,7 @@ init =
 
 type Action
   = NoOp
+  | SetArtists (List Artist)
 
 
 update : Action -> Model -> Model
@@ -39,6 +40,9 @@ update action model =
   case action of
     NoOp ->
       model
+
+    SetArtists artists ->
+      artists
 
 
 -- SIGNALS
