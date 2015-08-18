@@ -44,8 +44,8 @@ update action model =
     NoOp ->
       model
 
-    SetArtists artists ->
-      artists
+    SetArtists model' ->
+      model'
 
 
 -- SIGNALS
