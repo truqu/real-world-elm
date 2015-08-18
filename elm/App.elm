@@ -66,4 +66,4 @@ actions =
 
 view : Model -> Html
 view model =
-    Html.div [] [ Html.text "TODO" ]
+  Html.div [] [ Html.text "TODO" ]
