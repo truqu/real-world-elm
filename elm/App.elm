@@ -79,14 +79,14 @@ port runner =
 
 view : Model -> Html
 view model =
-  let th' field = th [] [ text field ]
-      tr' artist = tr [] [ td [] [ text <| toString artist.id ]
-                         , td [] [ text <| artist.name ]
+  let th' field = th [] [text field]
+      tr' artist = tr [] [ td [] [text <| toString artist.id]
+                         , td [] [text <| artist.name]
                          ]
   in
-    div [ class "container" ]
-    [ table [ class "table table-striped table-bordered" ]
-      [ thead [] [ tr [] <| List.map th' ["ID", "name"] ]
-      , tbody [] <| List.map tr' model
+    div [class "container"]
+    [ table [class "table table-striped table-bordered"]
+      [ thead [] [tr [] (List.map th' ["ID", "name"])]
+      , tbody [] (List.map tr' model)
       ]
     ]
