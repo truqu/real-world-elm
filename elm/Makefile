@@ -7,6 +7,7 @@ PATH := $(ELM_PATH)/bin:$(PATH)
 
 app.js: $(ELM_FILES)
 	elm-make --yes App.elm --output app.js
+
 clean-deps:
 	rm -rf elm-stuff
 
