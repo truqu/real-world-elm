@@ -1,7 +1,10 @@
 module App where
 
+import Debug
 import Html exposing (Html)
+import Http
 import Json.Decode exposing ((:=))
+import Task exposing (Task, andThen)
 
 
 -- MODEL
@@ -60,6 +63,15 @@ actions : Signal.Mailbox Action
 actions =
   Signal.mailbox NoOp
 
+
+get : Task Http.Error (List Artist)
+get =
+  Http.get (Json.Decode.list artist) "/api/artists"
+
+
+port runner : Task Http.Error ()
+port runner =
+  get `andThen` (SetArtists >> Signal.send actions.address)
 
 
 -- VIEW
