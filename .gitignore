@@ -1,4 +1,4 @@
-.erlang.mk.packages.v2
+.erlang.mk*
 _rel
 deps
 ebin
