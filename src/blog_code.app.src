@@ -3,7 +3,7 @@
 { application
 , blog_code
 , [ {description, ""}
-  , {vsn, "0.1.0"}
+  , {vsn, "1.1.0"}
   , {modules, []}
   , {registered, [ blog_code_sup
                  ]
