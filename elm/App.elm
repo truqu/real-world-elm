@@ -1,5 +1,6 @@
 module App where
 
+import Data.Artist exposing (Artist)
 import Debug
 import Html exposing (..)
 import Html.Attributes exposing (class)
@@ -9,19 +10,6 @@ import Task exposing (Task, andThen)
 
 
 -- MODEL
-
-type alias Artist =
-  { id: Int
-  , name: String
-  }
-
-
-artist : Json.Decode.Decoder Artist
-artist =
-  Json.Decode.object2 Artist
-    ("id" := Json.Decode.int)
-    ("name" := Json.Decode.string)
-
 
 type alias Model =
   List Artist
@@ -67,7 +55,7 @@ actions =
 
 get : Task Http.Error (List Artist)
 get =
-  Http.get (Json.Decode.list artist) "/api/artists"
+  Http.get (Json.Decode.list Data.Artist.fromJson) "/api/artists"
 
 
 port runner : Task Http.Error ()
