@@ -1,30 +1,41 @@
 module App where
 
-import Data.Artist exposing (Artist)
 import Debug
+import Dict exposing (Dict)
 import Html exposing (..)
-import Html.Attributes exposing (class)
-import Http
-import Json.Decode exposing ((:=))
-import Task exposing (Task, andThen)
+import Html.Attributes exposing (action, attribute, class, for, id, type')
+import Html.Events exposing (on, targetValue)
 
 
 -- MODEL
 
 type alias Model =
-  List Artist
+  { name: String
+  , age: String
+  , errors: Dict String InputState
+  }
 
 
 init : Model
 init =
-  []
+  { name = ""
+  , age = ""
+  , errors = Dict.empty
+  }
+
+
+type InputState
+  = Initial
+  | HasError String
+  | IsOkay
 
 
 -- UPDATE
 
 type Action
   = NoOp
-  | SetArtists (List Artist)
+  | SetName String
+  | SetAge String
 
 
 update : Action -> Model -> Model
@@ -33,8 +44,11 @@ update action model =
     NoOp ->
       model
 
-    SetArtists model' ->
-      model'
+    SetName name' ->
+      { model | name <- name' }
+
+    SetAge age' ->
+      { model | age <- age' }
 
 
 -- SIGNALS
@@ -53,28 +67,31 @@ actions =
   Signal.mailbox NoOp
 
 
-get : Task Http.Error (List Artist)
-get =
-  Http.get (Json.Decode.list Data.Artist.fromJson) "/api/artists"
-
-
-port runner : Task Http.Error ()
-port runner =
-  get `andThen` (SetArtists >> Signal.send actions.address)
-
-
 -- VIEW
 
 view : Model -> Html
 view model =
-  let th' field = th [] [text field]
-      tr' artist = tr [] [ td [] [text <| toString artist.id]
-                         , td [] [text <| artist.name]
-                         ]
-  in
-    div [class "container"]
-    [ table [class "table table-striped table-bordered"]
-      [ thead [] [tr [] (List.map th' ["ID", "name"])]
-      , tbody [] (List.map tr' model)
+  div [ class "container" ]
+  [ div [ attribute "role" "form" ]
+    [ div [ class "form-group" ]
+      [ label [ for "name" ]
+        [ text "name" ]
+      , input [ id "name", type' "text" , class "form-control"
+              , on "input" targetValue
+                     (Signal.message actions.address << SetName)
+              ]
+        []
       ]
+    , div [ class "form-group" ]
+      [ label [ for "age" ]
+        [ text "age" ]
+      , input [ id "age", type' "text" , class "form-control"
+              , on "input" targetValue
+                     (Signal.message actions.address << SetAge)
+              ]
+             []
+      ]
+    , button [ class "btn btn-default" ]
+      [ text "Submit" ]
     ]
+  ]
