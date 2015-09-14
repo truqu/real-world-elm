@@ -4,8 +4,8 @@ import Debug
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (action, attribute, class, for, id, type')
-import Html.Events exposing (on, targetValue)
-
+import Html.Events exposing (on, onClick, targetValue)
+import String
 
 -- MODEL
 
@@ -29,6 +29,21 @@ type InputState
   | HasError String
   | IsOkay
 
+isValidName : String -> Bool
+isValidName =
+  not << String.isEmpty
+
+isValidAge : String -> Bool
+isValidAge value =
+  case String.toInt value of
+    Ok int ->
+      int >= 0
+    Err _ ->
+      False
+
+isValid : Model -> Bool
+isValid model =
+  isValidName model.name && isValidAge model.age
 
 -- UPDATE
 
@@ -36,6 +51,8 @@ type Action
   = NoOp
   | SetName String
   | SetAge String
+  | SetErrors
+  | Submit
 
 
 update : Action -> Model -> Model
@@ -49,6 +66,20 @@ update action model =
 
     SetAge age' ->
       { model | age <- age' }
+
+    SetErrors ->
+      let name = if isValidName model.name
+                 then IsOkay
+                 else HasError "Please enter your name"
+          age = if isValidAge model.age
+                then IsOkay
+                else HasError "Please enter your age as a whole number"
+          errors' = Dict.fromList [("name", name), ("age", age)]
+      in
+        { model | errors <- errors' }
+
+    Submit ->
+      model
 
 
 -- SIGNALS
@@ -91,7 +122,9 @@ view model =
               ]
              []
       ]
-    , button [ class "btn btn-default" ]
+    , button [ class "btn btn-default"
+             , onClick actions.address <| if isValid model then Submit else SetErrors
+             ]
       [ text "Submit" ]
     ]
   ]
