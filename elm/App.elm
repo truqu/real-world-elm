@@ -13,6 +13,7 @@ type alias Model =
   { name: String
   , age: String
   , inputState: Dict String InputState
+  , submit: Bool
   }
 
 
@@ -21,6 +22,7 @@ init =
   { name = ""
   , age = ""
   , inputState = Dict.empty
+  , submit = False
   }
 
 
@@ -91,7 +93,7 @@ update action model =
         { model | inputState <- inputState' }
 
     Submit ->
-      model
+      { model | submit <- True }
 
 
 -- SIGNALS
@@ -115,16 +117,24 @@ actions =
 view : Model -> Html
 view model =
   div [ class "container" ]
-  [ div [ attribute "role" "form" ]
-    [ nameInput model
-    , ageInput model
-    , button [ class "btn btn-default"
-             , onClick actions.address <| if isValid model then Submit else SetInputState
+  <| if model.submit
+     then
+       [ div [ class "alert alert-success"
+             , attribute "role" "alert"
              ]
-      [ text "Submit" ]
-    ]
-  ]
-
+         [ text "The form has been submitted successfully"]
+       ]
+     else
+       [ div [ attribute "role" "form" ]
+         [ nameInput model
+         , ageInput model
+         , button [ class "btn btn-default"
+                  , onClick actions.address
+                    <| if isValid model then Submit else SetInputState
+                  ]
+           [ text "Submit" ]
+         ]
+       ]
 
 nameInput : Model -> Html
 nameInput =
