@@ -12,7 +12,7 @@ import String
 type alias Model =
   { name: String
   , age: String
-  , errors: Dict String InputState
+  , inputState: Dict String InputState
   }
 
 
@@ -20,7 +20,7 @@ init : Model
 init =
   { name = ""
   , age = ""
-  , errors = Dict.empty
+  , inputState = Dict.empty
   }
 
 
@@ -29,9 +29,11 @@ type InputState
   | HasError String
   | IsOkay
 
+
 isValidName : String -> Bool
 isValidName =
   not << String.isEmpty
+
 
 isValidAge : String -> Bool
 isValidAge value =
@@ -41,9 +43,19 @@ isValidAge value =
     Err _ ->
       False
 
+
 isValid : Model -> Bool
 isValid model =
   isValidName model.name && isValidAge model.age
+
+
+type alias InputParams =
+  { id: String
+  , label: String
+  , type': String
+  , action: String -> Action
+  }
+
 
 -- UPDATE
 
@@ -51,7 +63,7 @@ type Action
   = NoOp
   | SetName String
   | SetAge String
-  | SetErrors
+  | SetInputState
   | Submit
 
 
@@ -67,16 +79,16 @@ update action model =
     SetAge age' ->
       { model | age <- age' }
 
-    SetErrors ->
+    SetInputState ->
       let name = if isValidName model.name
                  then IsOkay
                  else HasError "Please enter your name"
           age = if isValidAge model.age
                 then IsOkay
                 else HasError "Please enter your age as a whole number"
-          errors' = Dict.fromList [("name", name), ("age", age)]
+          inputState' = Dict.fromList [("name", name), ("age", age)]
       in
-        { model | errors <- errors' }
+        { model | inputState <- inputState' }
 
     Submit ->
       model
@@ -104,27 +116,66 @@ view : Model -> Html
 view model =
   div [ class "container" ]
   [ div [ attribute "role" "form" ]
-    [ div [ class "form-group" ]
-      [ label [ for "name" ]
-        [ text "name" ]
-      , input [ id "name", type' "text" , class "form-control"
-              , on "input" targetValue
-                     (Signal.message actions.address << SetName)
-              ]
-        []
-      ]
-    , div [ class "form-group" ]
-      [ label [ for "age" ]
-        [ text "age" ]
-      , input [ id "age", type' "text" , class "form-control"
-              , on "input" targetValue
-                     (Signal.message actions.address << SetAge)
-              ]
-             []
-      ]
+    [ nameInput model
+    , ageInput model
     , button [ class "btn btn-default"
-             , onClick actions.address <| if isValid model then Submit else SetErrors
+             , onClick actions.address <| if isValid model then Submit else SetInputState
              ]
       [ text "Submit" ]
     ]
   ]
+
+
+nameInput : Model -> Html
+nameInput =
+  input' { id = "name"
+         , label = "name"
+         , type' = "text"
+         , action = SetName
+         }
+
+
+ageInput : Model -> Html
+ageInput =
+  input' { id = "age"
+         , label = "age"
+         , type' = "text"
+         , action = SetAge
+         }
+
+
+input' : InputParams -> Model -> Html
+input' params model =
+  let state = case Dict.get params.id model.inputState of
+                Nothing -> Initial
+                Just value -> value
+  in
+    div [ class <| case state of
+                     Initial ->
+                       "form-group"
+                     HasError _ ->
+                       "form-group has-feedback has-error"
+                     IsOkay ->
+                       "form-group has-feedback has-success"
+        ]
+    [ label [ for params.id ] [ text params.label ]
+    , input [ id params.id, type' params.type' , class "form-control"
+            , on "input" targetValue
+                   (Signal.message actions.address << params.action)
+            ]
+      []
+    , span [ class <| case state of
+                        Initial ->
+                          "glyphicon glyphicon-blank form-control-feedback"
+                        HasError _ ->
+                          "glyphicon glyphicon-remove form-control-feedback"
+                        IsOkay ->
+                          "glyphicon glyphicon-ok form-control-feedback"
+           ]
+      []
+    , span [ class "help-block" ]
+      [ case state of
+          HasError error -> text error
+          _ -> text ""
+      ]
+    ]
