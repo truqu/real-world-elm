@@ -9,7 +9,8 @@ include erlang.mk
 
 elm:
 	$(MAKE) -C elm
-	npm run-script uglify
+	mkdir -p priv/js
+	cp elm/app.js priv/js/app.js
 
 elm-clean:
 	$(MAKE) -C elm clean
